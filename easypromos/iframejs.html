@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Embedded Content Example</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      iframe {
+        height: 80%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe src="https://example.com" id="embedded-content"></iframe>
+    <script>
+      // Get a reference to the iframe's content document
+      var iframe = document.getElementById('embedded-content');
+      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      // Hide the element with ID "example-element" in the embedded content
+      var exampleElement = iframeDoc.getElementById('example-element');
+      exampleElement.style.display = 'none';
+    </script>
+  </body>
+</html>

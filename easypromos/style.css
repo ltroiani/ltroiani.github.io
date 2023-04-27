@@ -2,8 +2,8 @@
   display: block;
   background-color: #ddd;
   font-family: sans-serif;
-  padding: 2em;
-  margin-bottom: 3em;
+  padding: 4em;
+  text-align: center;
 }
 
 
@@ -11,8 +11,7 @@
   display: block;
   background-color: #ddd;
   font-family: sans-serif;
-  padding: 2em;
-  margin-bottom: 3em;
+  padding: 4em;
 }
 
 #widget {

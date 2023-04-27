@@ -1,14 +1,16 @@
 #footer {
   display: block;
-  color: #ddd;
+  background-color: #ddd;
+  font-family: sans-serif;
   padding: 2em;
-  margin-top: 3em;
+  margin-bottom: 3em;
 }
 
 
 #header {
   display: block;
-  color: #ddd;
+  background-color: #ddd;
+  font-family: sans-serif;
   padding: 2em;
   margin-bottom: 3em;
 }

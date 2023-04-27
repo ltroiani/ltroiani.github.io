@@ -1,4 +1,4 @@
-#footer {
+#header {
   display: block;
   background-color: #ddd;
   font-family: sans-serif;
@@ -6,12 +6,12 @@
   text-align: center;
 }
 
-
-#header {
+#footer {
   display: block;
   background-color: #ddd;
   font-family: sans-serif;
   padding: 4em;
+  text-align: center;
 }
 
 #widget {

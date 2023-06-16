@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Last Night's Maple Leafs Game</title>
+    <style>
+      img {
+        height: 50px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Last Night's Maple Leafs Game</h1>
+    <div id="game-summary"></div>
+
+    <script>
+      // const date = new Date();
+      // const apiUrl = `https://statsapi.web.nhl.com/api/v1/teams/10?expand=team.schedule.previous`;
+
+      const date = '2023-04-29';
+      const apiUrl = `https://statsapi.web.nhl.com/api/v1/game/2022020806/feed/live`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const previousGame = data.teams[0].previousGameSchedule.dates[0].games[0];
+          const gameSummary = document.getElementById('game-summary');
+          const awayTeamName = previousGame.teams.away.team.name;
+          const awayTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${previousGame.teams.away.team.id}.svg`;
+          const homeTeamName = previousGame.teams.home.team.name;
+          const homeTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${previousGame.teams.home.team.id}.svg`;
+          const venueName = previousGame.venue.name;
+          const gameDate = new Date(previousGame.gameDate);
+          const gameIsPast = gameDate < date;
+
+          if (gameIsPast) {
+            const starsUrl = `https://statsapi.web.nhl.com/api/v1/game/${previousGame.gamePk}/feed/live?site=en_nhl`;
+
+            fetch(starsUrl)
+              .then(response => response.json())
+              .then(data => {
+                const stars = data.liveData.decisions;
+                gameSummary.innerHTML = `
+                  <p>
+                    <img src="${awayTeamLogo}" alt="${awayTeamName} logo">${awayTeamName} ${previousGame.teams.away.score} vs
+                    <img src="${homeTeamLogo}" alt="${homeTeamName} logo">${homeTeamName} ${previousGame.teams.home.score} at ${venueName}
+                  </p>
+                  <p>Three stars of the game:</p>
+                  <ol>
+                    <li>${stars.firstStar.fullName}</li>
+                    <li>${stars.secondStar.fullName}</li>
+                    <li>${stars.thirdStar.fullName}</li>
+                  </ol>
+                `;
+              })
+              .catch(error => console.error(error));
+          } else {
+            gameSummary.innerHTML = `
+              <p>
+                ${awayTeamName} vs ${homeTeamName} at ${venueName} - Game in progress or not yet started.
+              </p>
+            `;
+          }
+        })
+        .catch(error => console.error(error));
+    </script>
+  </body>
+</html>

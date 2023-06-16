@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Last Saturday's NHL Games and Three Stars</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Last Saturday's NHL Games and Three Stars</h1>
+
+<div id="gameDetails"></div>
+
+<script>
+    $(document).ready(function() {
+        var gamesUrl = "https://statsapi.web.nhl.com/api/v1/game/2022020806/feed/live";
+
+        $.ajax({
+            type: "GET",
+            url: gamesUrl,
+            success: function(data) {
+                var gameDetails = "";
+                var games = data.dates[0].games;
+                for (var i = 0; i < games.length; i++) {
+                    var gameDate = games[i].gameDate;
+                    var homeTeam = games[i].teams.home.team.name;
+                    var awayTeam = games[i].teams.away.team.name;
+                    var homeScore = games[i].teams.home.score;
+                    var awayScore = games[i].teams.away.score;
+                    var firstStar = games[i].decisions.firstStar.fullName;
+                    var secondStar = games[i].decisions.secondStar.fullName;
+                    var thirdStar = games[i].decisions.thirdStar.fullName;
+
+                    gameDetails += "<h2>Game " + (i + 1) + "</h2>";
+                    gameDetails += "<p><strong>Date:</strong> " + gameDate + "</p>";
+                    gameDetails += "<p><strong>Teams:</strong> " + awayTeam + " @ " + homeTeam + "</p>";
+                    gameDetails += "<p><strong>Score:</strong> " + awayScore + " - " + homeScore + "</p>";
+                    gameDetails += "<h3>Three Stars</h3>";
+                    gameDetails += "<p><strong>First Star:</strong> " + firstStar + "</p>";
+                    gameDetails += "<p><strong>Second Star:</strong> " + secondStar + "</p>";
+                    gameDetails += "<p><strong>Third Star:</strong> " + thirdStar + "</p>";
+                }
+                $("#gameDetails").html(gameDetails);
+            },
+            error: function() {
+                alert("Error retrieving data");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

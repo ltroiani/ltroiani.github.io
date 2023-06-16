@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Last Saturday's NHL Scores</title>
+  </head>
+  <body>
+    <h1>Last Saturday's NHL Scores</h1>
+    <ul id="scores"></ul>
+    <script>
+      // Set the date for last Saturday
+      const lastSaturday = new Date();
+      lastSaturday.setDate(lastSaturday.getDate() - (lastSaturday.getDay() + 1) % 7);
+
+      // Format the date string for the API request
+      const dateStr = lastSaturday.toISOString().slice(0, 10);
+
+      // Set the API endpoint and parameters
+      const endpoint = `https://statsapi.web.nhl.com/api/v1/schedule`;
+      const params = {
+        date: dateStr,
+        expand: 'schedule.linescore',
+        site: 'en_nhl'
+      };
+
+      // Send the request and get the response
+      fetch(endpoint + '?' + new URLSearchParams(params))
+        .then(response => response.json())
+        .then(data => {
+          // Get the games for the day
+          const games = data.dates[0].games;
+
+          // Loop through the games and display the teams, scores, and three stars
+          const scoresList = document.getElementById('scores');
+          games.forEach(game => {
+            const homeTeam = game.teams.home.team.name;
+            const awayTeam = game.teams.away.team.name;
+            const homeScore = game.teams.home.score;
+            const awayScore = game.teams.away.score;
+
+            // Get the three stars for the game
+            let star1 = '';
+            let star2 = '';
+            let star3 = '';
+
+            if (game.decisions) {
+              star1 = game.decisions.firstStar ? game.decisions.firstStar.fullName : '';
+              star2 = game.decisions.secondStar ? game.decisions.secondStar.fullName : '';
+              star3 = game.decisions.thirdStar ? game.decisions.thirdStar.fullName : '';
+            }
+
+            // Create a list item for the game and add it to the list
+            const scoreItem = document.createElement('li');
+            scoreItem.innerHTML = `${awayTeam} (${awayScore}) at ${homeTeam} (${homeScore})<br>Three stars: ${star1}${star1 && star2 ? ', ' : ''}${star2}${(star1 || star2) && star3 ? ', ' : ''}${star3}`;
+            scoresList.appendChild(scoreItem);
+          });
+        })
+        .catch(error => {
+          // Print an error message if the request was unsuccessful
+          console.error('Error retrieving data:', error);
+        });
+    </script>
+  </body>
+</html>

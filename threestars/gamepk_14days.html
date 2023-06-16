@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>NHL Stats API Example</title>
+    <link rel="stylesheet" href="assets/style.css">
+  </head>
+  <body>
+
+
+<div class="game">
+<div class="past">
+  <h1>Past Games</h1>
+  <ul id="past-games">
+    <li>Loading...</li>
+  </ul>
+</div>
+
+
+<div class="future">
+  <h1>Future Games</h1>
+  <ul id="next-games">
+    <li>Loading...</li>
+  </ul>
+</div>
+
+</div>
+
+    <script>
+      const apiUrl = 'https://statsapi.web.nhl.com/api/v1';
+      const today = new Date();
+      const startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      // Retrieve the schedule for the last 7 days
+      fetch(`${apiUrl}/schedule?startDate=${startDate}&endDate=${today.toISOString().split('T')[0]}`)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates.flatMap(date => date.games);
+          if (games.length > 0) {
+            // Display the game information
+            const gameList = document.getElementById('past-games');
+            gameList.innerHTML = '';
+            games.forEach(game => {
+              const listItem = document.createElement('li');
+              listItem.textContent = `${game.gamePk} : ${game.teams.away.team.name} @ ${game.teams.home.team.name}`;
+              gameList.appendChild(listItem);
+            });
+          } else {
+            console.error('No games found in the last 7 days.');
+            document.querySelector('#past-games li').textContent = 'No games found in the last 7 days.';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('#past-games li').textContent = 'An error occurred while retrieving the game information.';
+        });
+
+      // Retrieve the schedule for the next 7 days
+      fetch(`${apiUrl}/schedule?startDate=${today.toISOString().split('T')[0]}&endDate=${new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}`)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates.flatMap(date => date.games);
+          if (games.length > 0) {
+            // Display the game information
+            const gameList = document.getElementById('next-games');
+            gameList.innerHTML = '';
+            games.forEach(game => {
+              const listItem = document.createElement('li');
+              listItem.textContent = `${game.gamePk}  –  ${game.teams.away.team.name} @ ${game.teams.home.team.name}`;
+              gameList.appendChild(listItem);
+            });
+          } else {
+            console.error('No games found in the next 7 days.');
+            document.querySelector('#next-games li').textContent = 'No games found in the next 7 days.';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('#next-games li').textContent = 'An error occurred while retrieving the game information.';
+        });
+    </script>
+  </body>
+</html>

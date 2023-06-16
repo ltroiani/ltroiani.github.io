@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Last Saturday's NHL Games</title>
+  </head>
+  <body>
+    <h1>Last Saturday's NHL Games</h1>
+    <h2>Last Week's Three Stars</h2>
+    <div id="last-games"></div>
+    <script>
+      const today = new Date();
+      const lastSaturday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 6);
+      const lastSaturdayFormatted = `${lastSaturday.getFullYear()}-${String(lastSaturday.getMonth() + 1).padStart(2, '0')}-${String(lastSaturday.getDate()).padStart(2, '0')}`;
+
+      const lastGamesList = document.getElementById('last-games');
+
+      // Get the three stars for last Saturday's games
+      const lastSaturdayUrl = `https://statsapi.web.nhl.com/api/v1/schedule?date=${lastSaturdayFormatted}&expand=schedule.linescore&expand=schedule.broadcasts&expand=schedule.ticket&expand=schedule.game.content.media.epg`;
+
+      fetch(lastSaturdayUrl)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates[0].games;
+          games.forEach(game => {
+            const gameStatus = game.status.abstractGameState;
+            if (gameStatus === 'Final') {
+              const gameId = game.gamePk;
+              const gameBoxscoreUrl = `https://statsapi.web.nhl.com/api/v1/game/${gameId}/boxscore`;
+              fetch(gameBoxscoreUrl)
+                .then(response => response.json())
+                .then(data => {
+                  const awayTeamName = game.teams.away.team.name;
+                  const homeTeamName = game.teams.home.team.name;
+                  const awayTeamScore = game.teams.away.score;
+                  const homeTeamScore = game.teams.home.score;
+                  const venueName = game.venue.name;
+                  const stars = data.teams.away.players.concat(data.teams.home.players)
+                    .filter(player => player.stats.skaterStats !== undefined || player.stats.goalieStats !== undefined)
+                    .sort((a, b) => (b.stats.skaterStats !== undefined ? b.stats.skaterStats.goals + b.stats.skaterStats.assists : b.stats.goalieStats.saves) -
+                      (a.stats.skaterStats !== undefined ? a.stats.skaterStats.goals + a.stats.skaterStats.assists : a.stats.goalieStats.saves))
+                    .slice(0, 3);
+                  if (stars.length > 0) {
+                    const gameDiv = document.createElement('div');
+                    gameDiv.innerHTML = `
+                      <h2>${awayTeamName} ${awayTeamScore} - ${homeTeamScore} ${homeTeamName} - ${venueName}</h2>
+                      <ol>
+                        <li>${stars[0].person.fullName} - ${stars[0].stats.skaterStats !== undefined ? stars[0].stats.skaterStats.goals + stars[0].stats.skaterStats.assists + ' points' : stars[0].stats.goalieStats.saves + ' saves'}</li>
+                        <li>${stars[1].person.fullName} - ${stars[1].stats.skaterStats !== undefined ? stars[1].stats.skaterStats.goals + stars[1].stats.skaterStats.assists + ' points' : stars[1].stats.goalieStats.saves + ' saves'}</li>
+                        <li>${stars[2].person.fullName} - ${stars[2].stats.skaterStats !== undefined ? stars[2].stats.skaterStats.goals + stars[2].stats.skaterStats.assists + ' points' : stars[2].stats.goalieStats.saves + ' saves'}</li>
+                `;
+                lastGamesList.appendChild(gameDiv);
+              }
+            });
+        }
+      });
+    });
+</script>
+
+</body>
+</html>

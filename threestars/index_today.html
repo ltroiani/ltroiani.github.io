@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Upcoming Hockey Games</title>
+    <style>
+      img {
+        height: 50px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Upcoming Hockey Games for Tonight</h1>
+    <div id="game-list"></div>
+
+    <script>
+      const date = new Date().toISOString().slice(0,10);
+      const apiUrl = `https://statsapi.web.nhl.com/api/v1/schedule?date=${date}`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates[0].games;
+          const gameList = document.getElementById('game-list');
+
+          games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            const awayTeamName = game.teams.away.team.name;
+            const awayTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${game.teams.away.team.id}.svg`;
+            const homeTeamName = game.teams.home.team.name;
+            const homeTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${game.teams.home.team.id}.svg`;
+            const venueName = game.venue.name;
+            const gameDate = new Date(game.gameDate);
+            const currentTime = new Date();
+            const gameIsPast = gameDate < currentTime;
+
+            if (gameIsPast) {
+              const starsUrl = `https://statsapi.web.nhl.com/api/v1/game/${game.gamePk}/feed/live?site=en_nhl`;
+
+              fetch(starsUrl)
+                .then(response => response.json())
+                .then(data => {
+                  const stars = data.liveData.decisions;
+                  gameDiv.innerHTML = `
+                    <p>
+                      <img src="${awayTeamLogo}" alt="${awayTeamName} logo">${awayTeamName} vs
+                      <img src="${homeTeamLogo}" alt="${homeTeamName} logo">${homeTeamName} at ${venueName}
+                    </p>
+                    <p>Three stars of the game:</p>
+                    <ol>
+                      <li>${stars.firstStar.fullName}</li>
+                      <li>${stars.secondStar.fullName}</li>
+                      <li>${stars.thirdStar.fullName}</li>
+                    </ol>
+                  `;
+                  gameList.appendChild(gameDiv);
+                })
+                .catch(error => console.error(error));
+            } else {
+              gameDiv.innerHTML = `
+                <p>
+                  <img src="${awayTeamLogo}" alt="${awayTeamName} logo">${awayTeamName} vs
+                  <img src="${homeTeamLogo}" alt="${homeTeamName} logo">${homeTeamName} at ${venueName}
+                </p>
+              `;
+              gameList.appendChild(gameDiv);
+            }
+          });
+        })
+        .catch(error => console.error(error));
+    </script>
+  </body>
+</html>

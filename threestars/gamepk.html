@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>NHL Stats API Example</title>
+  </head>
+  <body>
+    <h1>Last 7 Days Games</h1>
+    <p>Loading...</p>
+
+
+    <div class="past">
+      <h1>Past Games</h1>
+      <ul id="past-games">
+        <li>Loading...</li>
+      </ul>
+    </div>
+
+    <script>
+      const apiUrl = 'https://statsapi.web.nhl.com/api/v1';
+      const today = new Date();
+      const startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      // Retrieve the schedule for the Leafs team
+      fetch(`${apiUrl}/schedule?startDate=${startDate}&endDate=${today.toISOString().split('T')[0]}`)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates.flatMap(date => date.games);
+          if (games.length > 0) {
+            // Display the game information
+            const gameInfo = games.map(game => `Game ${game.gamePk}: ${game.teams.away.team.name} @ ${game.teams.home.team.name}`).join('\n');
+            document.querySelector('p').textContent = gameInfo;
+          } else {
+            console.error('No games found in the last 7 days.');
+            document.querySelector('p').textContent = 'No games found in the last 7 days.';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('p').textContent = 'An error occurred while retrieving the game information.';
+        });
+
+
+        // Retrieve the schedule for the last 7 days
+        fetch(`${apiUrl}/schedule?startDate=${startDate}&endDate=${today.toISOString().split('T')[0]}`)
+          .then(response => response.json())
+          .then(data => {
+            const games = data.dates.flatMap(date => date.games);
+            if (games.length > 0) {
+              // Display the game information
+              const gameList = document.getElementById('past-games');
+              gameList.innerHTML = '';
+              games.forEach(game => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${game.gamePk} : ${game.teams.away.team.name} @ ${game.teams.home.team.name}`;
+                gameList.appendChild(listItem);
+              });
+            } else {
+              console.error('No games found in the last 7 days.');
+              document.querySelector('#past-games li').textContent = 'No games found in the last 7 days.';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.querySelector('#past-games li').textContent = 'An error occurred while retrieving the game information.';
+          });
+
+
+
+    </script>
+  </body>
+</html>

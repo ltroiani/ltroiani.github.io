@@ -2,27 +2,44 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Embedded Google</title>
-    <style>
-      html, body, iframe {
-        margin: 0;
-        padding: 0;
-        height: 80%;
-        width: 100%;
-        overflow: hidden;
-      }
-      #hplogo {
-        display: none !important;
-      }
-    </style>
+    <title>Embedded Content Example</title>
+      <style>
+        html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+
+        }
+        #widget {
+          height: 100%;
+          width: 100%;
+        }
+      </style>
+
   </head>
   <body>
-    <section>
-      <header>
-        Header Goes Here
-      </header>
-    </section>
-    <iframe src="https://www.google.com"></iframe>
+
+    <header>
+      Header Text goes here.
+    </header>
+      <div id="widget">
+        <div class="_widget" id="ep_frame_954996" style="width:100%;"></div><script type="text/javascript" src="https://v7b3r3q5.stackpathcdn.com/widget/widget_embed_adaptable.js?v=3.6.3" data-cfasync="false"></script><script type="text/javascript" src="https://v7b3r3q5.stackpathcdn.com/js/jquery.ba-postmessage.js?v=3.6.3" data-cfasync="false"></script><script type="text/javascript">if(typeof(EasyEmbedAdaptable) !== "undefined") { EasyEmbedAdaptable.init({ container_id:"ep_frame_954996", domain:"https://a.cstmapp.com/", gets:"micro=1&utm_source=widget&utm_medium=embed", max_height:"100%", promo_id:954996 }); }</script>
+        <script type="text/javascript">
+          // Get a reference to the widget's content document
+          var widgetFrame = document.getElementById('ep_frame_954996');
+          var widgetDoc = widgetFrame.contentDocument || widgetFrame.contentWindow.document;
+
+          // Hide elements with class "promo" in the embedded widget
+          var promoElements = widgetDoc.querySelectorAll('.promo');
+          for (var i = 0; i < promoElements.length; i++) {
+            promoElements[i].style.border = '30px';
+          }
+        </script>
+      </div>
+
+<footer>Footer Goes here</footer>
+
 
   </body>
 </html>

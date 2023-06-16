@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hockey Games for Today</title>
+    <link rel="stylesheet" href="assets/style.css">
+
+<style>
+      img {
+        width: 66px; /* set width to 50px */
+        height: auto;
+        display: block; /* add this property to center the image */
+        margin: 10px auto; /* add this property to center the image */
+      }
+.some-page-wrapper {
+  margin: 0px;
+  background-color: #AAA;
+  max-width: 960px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  border: 1px solid #555;
+  justify-content: center;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  max-height: 400px;
+  border: 1px solid #555;
+}
+.away-column, .home-column  {
+  background-color: #EEE;
+  /* height: 100vh;
+  max-height: 200px; */
+  padding: 30px;
+  text-align: center;
+  border-radius: 12px;
+  border: 8px solid #FFF;
+  box-shadow:
+    2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+    6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+    12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
+    22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+    41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+    100px 100px 80px rgba(0, 0, 0, 0.07);
+}
+@media only screen and (min-width: 600px) {
+  .away-column {margin-left: 5em;}
+  .home-column {margin-right: 5em;}
+}
+
+.column.starslist {
+  border: 0px;
+  padding-bottom: 40px;
+  max-height: 120px;
+  background-color: #FFF;
+
+}
+.starslist { margin: 0; padding: 0px;}
+
+  </style>
+  </head>
+<body>
+    <h1>Hockey Games for Today</h1>
+    <div id="game-list"></div>
+
+    <script>
+      const today = new Date().toISOString().slice(0,10);
+      // const apiUrl = `https://statsapi.web.nhl.com/api/v1/schedule?date=${today}`;
+      // A specific date
+      const apiUrl = `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-04-27`;
+      const teamUrl = `https://statsapi.web.nhl.com/api/v1/teams`;
+
+      fetch(teamUrl)
+        .then(response => response.json())
+        .then(data => {
+          const teams = {};
+          data.teams.forEach(team => {
+            teams[team.name] = team.abbreviation;
+          });
+          fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+              const games = data.dates[0].games;
+              const gameList = document.getElementById('game-list');
+
+              games.forEach(game => {
+                const gameDiv = document.createElement('div');
+                const awayTeamName = game.teams.away.team.name;
+                const awayTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${game.teams.away.team.id}.svg`;
+                const homeTeamName = game.teams.home.team.name;
+                const homeTeamLogo = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${game.teams.home.team.id}.svg`;
+                const gameDate = new Date(game.gameDate);
+                const currentTime = new Date();
+                const gameIsPast = gameDate < currentTime;
+
+                if (gameIsPast) {
+                  const starsUrl = `https://statsapi.web.nhl.com/api/v1/game/${game.gamePk}/feed/live?site=en_nhl`;
+                  const scoreUrl = `https://statsapi.web.nhl.com/api/v1/game/${game.gamePk}/boxscore`;
+
+                  fetch(starsUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                      const stars = data.liveData.decisions;
+
+                      fetch(scoreUrl)
+                        .then(response => response.json())
+                        .then(data => {
+                          const awayScore = data.teams.away.teamStats.teamSkaterStats.goals;
+                          const homeScore = data.teams.home.teamStats.teamSkaterStats.goals;
+                          gameDiv.innerHTML = `
+
+                              <div class='some-page-wrapper'>
+                              <div class='row'>
+                                <div class='column'>
+                                  <div class='away-column'>
+                                        <div><img src="${awayTeamLogo}" alt="${awayTeamName} logo"></div>
+                                        <div>${teams[awayTeamName]}</div>
+                                        <div><strong>${awayScore}</strong></div>
+                                  </div>
+                                </div>
+                                <div class='column'>
+                                  <div class='home-column'>
+                                    <div><img src="${homeTeamLogo}" alt="${homeTeamName} logo"></div>
+                                    <div>${teams[homeTeamName]}</div>
+                                    <div><strong>${homeScore}</strong></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                              <!-- <p>
+                              (${awayScore}) ${teams[awayTeamName]} <img src="${awayTeamLogo}" alt="${awayTeamName} logo"> vs
+                              <img src="${homeTeamLogo}" alt="${homeTeamName} logo">${teams[homeTeamName]} (${homeScore})
+                            </p> -->
+                            <div class='some-page-wrapper'>
+                            <div class='row'>
+                              <div class='column starslist'>
+                            <p>Three stars of the game:</p>
+                            <ol class="starslist">
+                              <li>${stars.firstStar.fullName}</li>
+                              <li>${stars.secondStar.fullName}</li>
+                              <li>${stars.thirdStar.fullName}</li>
+                            </ol>
+                            </div>
+                            </div>
+                            </div>
+                          `;
+                          gameList.appendChild(gameDiv);
+                        })
+                        .catch(error => console.error(error));
+                    })
+                    .catch(error => console.error(error));
+                } else {
+                  gameDiv.innerHTML = `
+                    <p>
+                      <img src="${awayTeamLogo}" alt="${awayTeamName} logo">${awayTeamName} vs
+                      <img src="${homeTeamLogo}" alt="${homeTeamName} logo">${homeTeamName}
+                    </p>
+                  `;
+                  gameList.appendChild(gameDiv);
+                }
+              });
+            })
+            .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
+    </script>
+  </body>
+</html>

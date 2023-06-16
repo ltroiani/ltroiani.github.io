@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Three stars using NHL Api</title>
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<h1>Game Information</h1>
+<section id="details">
+<p><strong>Date:</strong> <span id="gameDate"></span></p>
+
+<p><strong>Teams:</strong> <span id="gameTeams"></span></p>
+
+<p><strong>Away</strong> <span id="awayTeam"></span></p>
+
+</section>
+
+
+  <h2>First Star</h2>
+    <span id="firstStar"></span>
+
+    <h2>Second Star</h2>
+    <span id="secondStar"></span>
+
+    <h2>Third Star</h2>
+    <span id="thirdStar"></span>
+<!-- partial -->
+  <script>
+
+  $(document).ready(function() {
+         $.ajax({
+           type: "GET",
+           url: "https://statsapi.web.nhl.com/api/v1/game/2022020806/feed/live",
+           success: function(data) {
+             var gameDate = data.gameData.datetime.dateTime;
+             $("#gameDate").html(gameDate);
+
+             var homeTeam = data.gameData.teams.home.teamName;
+             var awayTeam = data.gameData.teams.away.teamName;
+             $("#gameTeams").html(awayTeam + " @ " + homeTeam);
+             $("#awayTeam").html(awayTeam);
+
+             var firstStar = data.liveData.decisions.firstStar.fullName;
+             $("#firstStar").html(firstStar);
+
+             var secondStar = data.liveData.decisions.secondStar.fullName;
+             $("#secondStar").html(secondStar);
+
+             var thirdStar = data.liveData.decisions.thirdStar.fullName;
+             $("#thirdStar").html(thirdStar);
+           }
+         });
+       });
+  </script>
+
+</body>
+</html>

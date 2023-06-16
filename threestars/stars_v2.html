@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>NHL Games</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style>
+		.game {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			margin: 10px 0;
+			padding: 10px;
+			background-color: #f0f0f0;
+			border-radius: 5px;
+		}
+		.teams {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		.team {
+			font-size: 24px;
+			font-weight: bold;
+		}
+		.score {
+			font-size: 48px;
+			font-weight: bold;
+			margin-top: 10px;
+		}
+		.stars {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+		}
+		.star {
+			font-size: 18px;
+			font-weight: bold;
+			margin: 0 10px;
+		}
+	</style>
+</head>
+<body>
+	<h1>NHL Games</h1>
+	<div id="gameList"></div>
+
+	<script>
+		$(document).ready(function() {
+			$.ajax({
+				type: "GET",
+				url: "https://statsapi.web.nhl.com/api/v1/schedule?startDate=2022-04-23&endDate=2022-04-23",
+				success: function(data) {
+					console.log(data);
+					var games = data.dates[0].games;
+					for (var i = 0; i < games.length; i++) {
+						var game = games[i];
+						var homeTeam = game.teams.home.team.name;
+						var awayTeam = game.teams.away.team.name;
+						var homeScore = game.teams.home.score;
+						var awayScore = game.teams.away.score;
+						var firstStar = game.decisions.firstStar.fullName;
+						var secondStar = game.decisions.secondStar.fullName;
+						var thirdStar = game.decisions.thirdStar.fullName;
+
+						var gameHTML = "<div class='game'>" +
+							"<div class='teams'>" +
+							"<div class='team'>" + awayTeam + "</div>" +
+							"<div class='score'>" + awayScore + "</div>" +
+							"</div>" +
+							"<div class='teams'>" +
+							"<div class='team'>" + homeTeam + "</div>" +
+							"<div class='score'>" + homeScore + "</div>" +
+							"</div>" +
+							"<div class='stars'>" +
+							"<div class='star'>" + firstStar + "</div>" +
+							"<div class='star'>" + secondStar + "</div>" +
+							"<div class='star'>" + thirdStar + "</div>" +
+							"</div>" +
+							"</div>";
+						$("#gameList").append(gameHTML);
+					}
+				},
+				error: function() {
+					$("#gameList").html("Error retrieving data.");
+				}
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>NHL Stats API Example</title>
+  </head>
+  <body>
+    <h1>Next Leafs Game</h1>
+    <p>Loading...</p>
+
+    <script>
+      const apiUrl = 'https://statsapi.web.nhl.com/api/v1';
+
+      // Retrieve the schedule for the Leafs team
+      fetch(`${apiUrl}/schedule?teamId=10`)
+        .then(response => response.json())
+        .then(data => {
+          const games = data.dates[0]?.games;
+          if (games) {
+            // Get the ID of the next game
+            const nextGameId = games[0].gamePk;
+
+            // Retrieve the boxscore for the next game
+            fetch(`${apiUrl}/game/${nextGameId}/boxscore`)
+              .then(response => response.json())
+              .then(data => {
+                // Display the game information
+                const game = data.game;
+                const awayTeam = game.teams.away.team.name;
+                const homeTeam = game.teams.home.team.name;
+                const gameDate = new Date(game.gameDate).toLocaleString();
+                const gameInfo = `Next game: ${awayTeam} vs ${homeTeam} on ${gameDate}`;
+                document.querySelector('p').textContent = gameInfo;
+              });
+          } else {
+            console.error('No upcoming games found.');
+            document.querySelector('p').textContent = 'No upcoming games found.';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('p').textContent = 'An error occurred while retrieving the game information.';
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tiled Background with Moving Overlay</title>
+  <style>
+    body {
+      background-image: url("left.png"), url("right.png"), url("cup.jpg"), url("tile.jpg");
+      background-repeat: repeat-x, repeat-x, no-repeat, repeat-x;
+      background-position: top left, top right, center top, center top;
+       /* Additional styling (optional) */
+       background-color: #1c2127; /* Set a background color if the tiled image is transparent */
+       margin: 0; /* Remove default body margin for full width */
+       padding: 0; /* Remove default body padding */
+       animation: moveOverlay 30s infinite linear;
+
+     }
+
+     @keyframes moveOverlay {
+       0% { background-position: left top, left top, center top; }
+       100% { background-position: 1920px top, -1920px top, center top, center top; }
+     }
+   </style>
+ </head>
+ <body>
+   <!-- Your webpage content here -->
+   <div style="display: block; margin: 200px auto 100px; width: 970px; height: 250px; text-align: center;">
+     <img src="snxSCP_lockup_970x250.png"></div>
+   <div style="display: block; margin: 50px auto; background-color: #FFF; width: 1440px; height: 100vh;">
+     <div style="padding: 4em 8em;">hello world</div>
+   </div>
+ </body>
+ </html>

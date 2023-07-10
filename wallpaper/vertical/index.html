@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tiled Background with Moving Overlay</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-image: url("wallpaper_flat3.jpg");
+      background-repeat: repeat-x;
+      animation: moveWallpaper 8s infinite linear;
+      background-color: #1c2127; /* Set a background color if the tiled image is transparent */
+     }
+
+     @keyframes moveWallpaper {
+       0% { background-position: left top, center top; }
+       100% { background-position: left 1000px, center top; }
+     }
+   </style>
+ </head>
+ <body>
+   <!-- Your webpage content here -->
+   <div style="display: block; margin: 0px auto; background-color: #F3f3f1; width: 1440px; height: 75px;">
+     <div style="padding: 25px 8em;color: #666;">SN Scores Board</div>
+   </div>
+   <div style="display: block; margin: 0px auto; background-color: #033a70; width: 1440px; height: 75px;">
+     <div style="padding: 25px 8em;color: white;">SN HEADER</div>
+  </div>
+   <div style="display: block; margin: 0px auto; width: 970px; height: 250px; text-align: center;">
+     <img style="padding-top: 25px;" src="snxSCP_lockup_970x250.png" height="200px">
+   </div>
+   <div style="display: block; margin: 0px auto; background-color: #FFF; width: 1440px; height: 100vh;">
+     <div style="padding: 4em 8em;">Hello World</div>
+   </div>
+ </body>
+ </body>
+ </html>

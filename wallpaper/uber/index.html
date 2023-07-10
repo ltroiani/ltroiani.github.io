@@ -4,6 +4,8 @@
   <title>Tiled Background with Moving Overlay</title>
   <style>
     body {
+      font-family: sans-serif;
+      margin: 0;
       background-image: url("left.png"), url("right.png"), url("cup.jpg"), url("tile.jpg");
       background-repeat: repeat-x, repeat-x, no-repeat, repeat-x;
       background-position: top left, top right, center top, center top;
@@ -23,10 +25,17 @@
  </head>
  <body>
    <!-- Your webpage content here -->
-   <div style="display: block; margin: 200px auto 100px; width: 970px; height: 250px; text-align: center;">
-     <img src="snxSCP_lockup_970x250.png"></div>
-   <div style="display: block; margin: 50px auto; background-color: #FFF; width: 1440px; height: 100vh;">
-     <div style="padding: 4em 8em;">hello world</div>
+   <div style="display: block; margin: 0px auto; background-color: #F3f3f1; width: 1440px; height: 75px;">
+     <div style="padding: 25px 8em;color: #666;">SN Scores Board</div>
+   </div>
+   <div style="display: block; margin: 0px auto; background-color: #033a70; width: 1440px; height: 75px;">
+     <div style="padding: 25px 8em;color: white;">SN HEADER</div>
+  </div>
+   <div style="display: block; margin: 0px auto; width: 970px; height: 250px; text-align: center;">
+     <img style="padding-top: 25px;" src="snxSCP_lockup_970x250.png" height="200px">
+   </div>
+   <div style="display: block; margin: 0px auto; background-color: #FFF; width: 1440px; height: 100vh;">
+     <div style="padding: 4em 8em;">Hello World</div>
    </div>
  </body>
  </html>
